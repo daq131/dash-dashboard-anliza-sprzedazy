@@ -9,6 +9,7 @@ import dash as dash_auth
 import plotly as go
 import dash as tab1
 import dash as tab2
+import dash as tab3
 
 class db:
     def __init__(self):
@@ -61,7 +62,8 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_ca
 # build a layout
 app.layout = html.Div([html.Div([dcc.Tabs(id='tabs',value='tab-1',children=[
                             dcc.Tab(label='Sprzedaż globalna',value='tab-1'),
-                            dcc.Tab(label='Produkty',value='tab-2')
+                            dcc.Tab(label='Produkty',value='tab-2'),
+                            dcc.Tab(label='Kanały sprzedaży',value='tab-3'),
                             ]),
                             html.Div(id='tabs-content')
                     ],style={'width':'80%','margin':'auto'})],
@@ -71,9 +73,11 @@ app.layout = html.Div([html.Div([dcc.Tabs(id='tabs',value='tab-1',children=[
 def render_content(tab):
 
     if tab == 'tab1':
-        return tab1.render_tab(df.merged)
+        return tab1.render_tab(df.merge())
     elif tab == 'tab2':
-        return tab2.render_tab(df.merged)
+        return tab2.render_tab(df.merge())
+    elif tab == 'tab3':
+        return tab3.render_tab(df.merge())
 
 ## tab1 callbacks
 @app.callback(Output('bar-sales','figure'),
