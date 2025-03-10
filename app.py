@@ -10,7 +10,6 @@ import plotly as go
 import dash as tab1
 import dash as tab2
 
-
 class db:
     def __init__(self):
         self.transactions = transaction_init()
@@ -20,7 +19,6 @@ class db:
 
     def merge(self):
         pass
-
 
 # read all files
 @staticmethod
@@ -56,11 +54,9 @@ def merge(self):
 df = db()
 df.merge()
 
-
 #  build a dashboard
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
-
 
 # build a layout
 app.layout = html.Div([html.Div([dcc.Tabs(id='tabs',value='tab-1',children=[
@@ -116,6 +112,7 @@ def tab1_choropleth_sales(start_date,end_date):
 ## tab2 callbacks
 @app.callback(Output('barh-prod-subcat','figure'),
             [Input('prod_dropdown','value')])
+
 def tab2_barh_prod_subcat(chosen_cat):
 
     grouped = df.merged[(df.merged['total_amt']>0)&(df.merged['prod_cat']==chosen_cat)].pivot_table(index='prod_subcat',columns='Gender',values='total_amt',aggfunc='sum').assign(_sum=lambda x: x['F']+x['M']).sort_values(by='_sum').round(2)
