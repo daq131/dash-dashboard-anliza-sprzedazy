@@ -5,7 +5,8 @@ import plotly as go
 
 def render_tab(df):
 
-    layout = html.Div([html.H1('Sprzedaż globalna',style={'text-align':'center'}),
+    layout = html.Div(children=[
+                        html.H1('Sprzedaż globalna',style={'text-align':'center'}),
                         html.Div([dcc.DatePickerRange(id='sales-range',
                         start_date=df['tran_date'].min(),
                         end_date=df['tran_date'].max(),
