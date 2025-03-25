@@ -1,3 +1,5 @@
+from idlelib.configdialog import tracers
+
 import pandas as pd
 import datetime as dt
 import os
@@ -10,6 +12,7 @@ import plotly.graph_objects as go
 import tab1
 import tab2
 import tab3
+import plotly.express as px
 
 class db:
     def __init__(self):
@@ -83,7 +86,7 @@ app.layout = html.Div([html.Div([dcc.Tabs(id='tabs',value='tab-1',children=[
                     ],style={'width':'80%','margin':'auto'})],
                     style={'height':'100%'})
 
-
+# create a callbacks
 @app.callback(Output('tabs-content','children'),
                     [Input('tabs','value')])
 def render_content(tab):
@@ -134,7 +137,9 @@ def tab1_choropleth_sales(start_date,end_date):
             [Input('prod_dropdown','value')])
 def tab2_barh_prod_subcat(chosen_cat):
 
-    grouped = df.merged[(df.merged['total_amt']>0)&(df.merged['prod_cat']==chosen_cat)].pivot_table(index='prod_subcat',columns='Gender',values='total_amt',aggfunc='sum').assign(_sum=lambda x: x['F']+x['M']).sort_values(by='_sum').round(2)
+    grouped = (df.merged[(df.merged['total_amt']>0)&(df.merged['prod_cat']==chosen_cat)].
+               pivot_table(index='prod_subcat',columns='Gender',values='total_amt',aggfunc='sum').
+               assign(_sum=lambda x: x['F']+x['M']).sort_values(by='_sum').round(2))
 
     traces = []
     for col in ['F','M']:
@@ -142,6 +147,19 @@ def tab2_barh_prod_subcat(chosen_cat):
 
     data = traces
     fig = go.Figure(data=data,layout=go.Layout(barmode='stack',margin={'t':20,}))
+    return fig
+
+
+##tab3 callbacks
+@app.callback(
+    Output("days", "figure"),
+    Input("ticker", "value"))
+def store_days(ticker):
+
+    df.merged['day_name'] = df.merged['tran_date'].dt.strftime("%A")
+
+    fig = go.Bar(x=df.merged['day_name'].unique(), y=ticker, orientation='h')
+
     return fig
 
 if __name__ == '__main__':
