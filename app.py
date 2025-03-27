@@ -150,17 +150,63 @@ def tab2_barh_prod_subcat(chosen_cat):
     return fig
 
 
-##tab3 callbacks
+##tab3 callbacks days
 @app.callback(
     Output("days", "figure"),
     Input("ticker", "value"))
 def store_days(ticker):
-
+    # Add day names
     df.merged['day_name'] = df.merged['tran_date'].dt.strftime("%A")
 
-    fig = go.Bar(x=df.merged['day_name'].unique(), y=ticker, orientation='h')
+    # Filter data for selected store type and calculate daily totals
+    filtered_data = df.merged[df.merged['Store_type'] == ticker]
+    daily_totals = filtered_data.groupby('day_name')['total_amt'].sum()
+
+    # Create figure
+    fig = go.Figure(data=[
+        go.Bar(x=daily_totals.index,
+               y=daily_totals.values,
+               orientation='h')
+    ])
+
+    # Update layout
+    fig.update_layout(
+        title=f'Daily Sales for {ticker}',
+        xaxis_title='Day of Week',
+        yaxis_title='Total Amount'
+    )
 
     return fig
+
+# @app.callback(Output('pie','figure'),
+#               Input('day','value'))
+# # def choose_sex(ticker1):
+# #
+#     # df.merged['day_name'] = df.merged['tran_date'].dt.strftime("%A")
+# #     mask = df.merged[df.merged['Store_type'] == ticker1]
+# #     dff = df.merged
+# #
+# #     #create figure
+# #     fig = go.Figure(go.Bar(dff[mask], x='Gender', y='total_amt', barmode='group'))
+# #
+# #     return fig
+# def update_bar_chart(day):
+#
+#     df.merged['day_name'] = df.merged['tran_date'].dt.strftime("%A")
+#     dff = df.merged # replace with your own data source
+#     mask = df.merged["day_name"] == day
+#     fig = px.bar(dff[mask], x="sex", y="total_amt",
+#                  color="smoker", barmode="group")
+#
+#
+#     # Update layout
+#     fig.update_layout(
+#         title=f'Daily Sales for {day}',
+#         xaxis_title='Day of Week',
+#         yaxis_title='Total Amount'
+#     )
+#
+#     return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
